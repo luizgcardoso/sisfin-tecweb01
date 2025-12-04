@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Membro;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
 class MembroController extends Controller
 {

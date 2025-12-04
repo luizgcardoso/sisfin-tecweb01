@@ -6,6 +6,7 @@ use App\Models\Recebimento;
 use App\Models\Pagamento;
 use App\Models\Caixa;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
 class RelatorioController extends Controller
 {
