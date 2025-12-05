@@ -8,14 +8,19 @@ return new class extends Migration {
     public function up()
     {
         Schema::create('cidades', function (Blueprint $table) {
-            $table->id();
-            $table->string('nome');
-            $table->string('desc')->nullable();
+            $table->id('idCidade');
+            $table->string('nome', 150);
+
             $table->unsignedBigInteger('idEstado');
-            $table->foreign('idEstado')->references('id')->on('estados')->onDelete('cascade');
-            $table->timestamps();
+
+            $table->foreign('idEstado')
+                ->references('idEstado')
+                ->on('estados')
+                ->onDelete('cascade');
         });
     }
+
+
 
     public function down()
     {

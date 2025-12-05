@@ -8,16 +8,11 @@ return new class extends Migration {
     public function up()
     {
         Schema::create('despesas', function (Blueprint $table) {
-            $table->id();
-            $table->string('status');
-            $table->string('tipoDespesa');
-            $table->date('data');
-            $table->date('dataVenc');
+            $table->id('idDespesa');
+            $table->string('descricao', 255);
+            $table->string('categoria', 150)->nullable();
             $table->decimal('valor', 10, 2);
-            $table->string('descricao')->nullable();
-            $table->unsignedBigInteger('idFornecedor');
-            $table->foreign('idFornecedor')->references('id')->on('fornecedores')->onDelete('cascade');
-            $table->timestamps();
+            $table->date('dataDesp');
         });
     }
 

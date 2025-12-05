@@ -8,14 +8,14 @@ return new class extends Migration {
     public function up()
     {
         Schema::create('itens_caixa', function (Blueprint $table) {
-            $table->id();
-            $table->string('tipoItem'); // recebimento ou pagamento
-            $table->date('data');
+            $table->id('idItem');
+            $table->unsignedBigInteger('idCaixa');
+            $table->string('descricao', 255);
             $table->decimal('valor', 10, 2);
-            $table->string('desc')->nullable();
-            $table->unsignedBigInteger('idPessoa')->nullable();
-            $table->foreign('idPessoa')->references('id')->on('pessoas')->onDelete('set null');
-            $table->timestamps();
+            $table->enum('tipo', ['E', 'S']); // Entrada/Saída
+            $table->date('dataMov');
+
+            $table->foreign('idCaixa')->references('idCaixa')->on('caixas');
         });
     }
 

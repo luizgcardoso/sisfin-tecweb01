@@ -2,21 +2,23 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Pagamento extends Model
 {
-    use HasFactory;
+    protected $table = 'pagamentos';
+    protected $primaryKey = 'idPagamento';
+    public $timestamps = false;
 
     protected $fillable = [
-        'status',
-        'dataPag',
-        'horaPag',
-        'valor',
+        'idFornecedor',
         'descricao',
-        'dataRef',
-        'formaPagamento',
-        'idDespesa'
+        'valor',
+        'dataPag'
     ];
+
+    public function fornecedor()
+    {
+        return $this->belongsTo(Fornecedor::class, 'idFornecedor', 'idFornecedor');
+    }
 }

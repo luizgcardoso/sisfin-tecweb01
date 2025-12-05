@@ -8,14 +8,12 @@ return new class extends Migration {
     public function up()
     {
         Schema::create('membros', function (Blueprint $table) {
-            $table->id();
+            $table->id('idMembro');
             $table->unsignedBigInteger('idPessoa');
-            $table->foreign('idPessoa')->references('id')->on('pessoas')->onDelete('cascade');
-            $table->string('status');
-            $table->date('dataCadastro');
-            $table->string('cargo')->nullable();
-            $table->string('descricao')->nullable();
-            $table->timestamps();
+            $table->string('funcao', 100)->nullable();
+            $table->date('dataEntrada')->nullable();
+
+            $table->foreign('idPessoa')->references('idPessoa')->on('pessoas');
         });
     }
 

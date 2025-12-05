@@ -2,12 +2,24 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class ItemCaixa extends Model
 {
-    use HasFactory;
     protected $table = 'itens_caixa';
-    protected $fillable = ['tipoItem', 'data', 'valor', 'desc', 'idPessoa'];
+    protected $primaryKey = 'idItem';
+    public $timestamps = false;
+
+    protected $fillable = [
+        'idCaixa',
+        'descricao',
+        'valor',
+        'tipo',
+        'dataMov'
+    ];
+
+    public function caixa()
+    {
+        return $this->belongsTo(Caixa::class, 'idCaixa', 'idCaixa');
+    }
 }

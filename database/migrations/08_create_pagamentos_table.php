@@ -8,17 +8,13 @@ return new class extends Migration {
     public function up()
     {
         Schema::create('pagamentos', function (Blueprint $table) {
-            $table->id();
-            $table->string('status');
-            $table->date('dataPag');
-            $table->time('horaPag');
+            $table->id('idPagamento');
+            $table->unsignedBigInteger('idFornecedor');
+            $table->string('descricao', 255);
             $table->decimal('valor', 10, 2);
-            $table->string('descricao')->nullable();
-            $table->string('dataRef')->nullable();
-            $table->string('formaPagamento')->nullable();
-            $table->unsignedBigInteger('idDespesa');
-            $table->foreign('idDespesa')->references('id')->on('despesas')->onDelete('cascade');
-            $table->timestamps();
+            $table->date('dataPag');
+
+            $table->foreign('idFornecedor')->references('idFornecedor')->on('fornecedores');
         });
     }
 

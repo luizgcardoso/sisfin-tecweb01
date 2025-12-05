@@ -2,12 +2,27 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Membro extends Model
 {
-    use HasFactory;
+    protected $table = 'membros';
+    protected $primaryKey = 'idMembro';
+    public $timestamps = false;
 
-    protected $fillable = ['idPessoa', 'status', 'dataCadastro', 'cargo', 'descricao'];
+    protected $fillable = [
+        'idPessoa',
+        'funcao',
+        'dataEntrada'
+    ];
+
+    public function pessoa()
+    {
+        return $this->belongsTo(Pessoa::class, 'idPessoa', 'idPessoa');
+    }
+
+    public function recebimentos()
+    {
+        return $this->hasMany(Recebimento::class, 'idMembro', 'idMembro');
+    }
 }

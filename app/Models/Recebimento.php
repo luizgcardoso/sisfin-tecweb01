@@ -2,22 +2,23 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Recebimento extends Model
 {
-    use HasFactory;
+    protected $table = 'recebimentos';
+    protected $primaryKey = 'idRecebimento';
+    public $timestamps = false;
 
     protected $fillable = [
-        'status',
-        'tipoRecebimento',
-        'dataRec',
-        'horaRec',
-        'valor',
+        'idMembro',
         'descricao',
-        'mesRef',
-        'formaRecebimento',
-        'idMembro'
+        'valor',
+        'dataRec'
     ];
+
+    public function membro()
+    {
+        return $this->belongsTo(Membro::class, 'idMembro', 'idMembro');
+    }
 }

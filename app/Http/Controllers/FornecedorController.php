@@ -10,29 +10,81 @@ class FornecedorController extends Controller
 {
     public function index()
     {
-        return Fornecedor::all();
+        return view('crud.index', [
+            'title' => 'Fornecedores',
+            'route' => 'fornecedores',
+            'pk' => 'idFornecedor',
+            'items' => Fornecedor::orderBy('nome')->paginate(12),
+            'fields' => ['idFornecedor', 'nome', 'telefone', 'email'],
+            'columns' => ['ID', 'Nome', 'Telefone', 'Email'],
+        ]);
+    }
+
+    public function create()
+    {
+        return view('crud.form', [
+            'title' => 'Novo Fornecedor',
+            'action' => route('fornecedores.store'),
+            'method' => 'POST',
+            'route' => 'fornecedores',
+            'item' => new Fornecedor(),
+            'fields' => [
+                ['label' => 'Nome', 'name' => 'nome', 'type' => 'text', 'col' => 6, 'required' => true],
+                ['label' => 'Telefone', 'name' => 'telefone', 'type' => 'text', 'col' => 6],
+                ['label' => 'Email', 'name' => 'email', 'type' => 'text', 'col' => 6],
+                ['label' => 'Observações', 'name' => 'obs', 'type' => 'textarea', 'col' => 6],
+            ],
+        ]);
     }
 
     public function store(Request $request)
     {
-        return Fornecedor::create($request->all());
+        $request->validate([
+            'nome' => 'required|string|max:150',
+            'telefone' => 'nullable|string|max:30',
+            'email' => 'nullable|email|max:150',
+            'obs' => 'nullable|string',
+        ]);
+
+        Fornecedor::create($request->only(['nome', 'telefone', 'email', 'obs']));
+
+        return redirect()->route('fornecedores.index')->with('success', 'Fornecedor criado.');
     }
 
-    public function show($id)
+    public function edit(Fornecedor $fornecedor)
     {
-        return Fornecedor::findOrFail($id);
+        return view('crud.form', [
+            'title' => 'Editar Fornecedor',
+            'action' => route('fornecedores.update', ['fornecedor' => $fornecedor->idFornecedor]),
+            'method' => 'PUT',
+            'route' => 'fornecedores',
+            'item' => $fornecedor,
+            'fields' => [
+                ['label' => 'Nome', 'name' => 'nome', 'type' => 'text', 'col' => 6, 'required' => true],
+                ['label' => 'Telefone', 'name' => 'telefone', 'type' => 'text', 'col' => 6],
+                ['label' => 'Email', 'name' => 'email', 'type' => 'text', 'col' => 6],
+                ['label' => 'Observações', 'name' => 'obs', 'type' => 'textarea', 'col' => 6],
+            ],
+        ]);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Fornecedor $fornecedor)
     {
-        $fornecedor = Fornecedor::findOrFail($id);
-        $fornecedor->update($request->all());
-        return $fornecedor;
+        $request->validate([
+            'nome' => 'required|string|max:150',
+            'telefone' => 'nullable|string|max:30',
+            'email' => 'nullable|email|max:150',
+            'obs' => 'nullable|string',
+        ]);
+
+        $fornecedor->update($request->only(['nome', 'telefone', 'email', 'obs']));
+
+        return redirect()->route('fornecedores.index')->with('success', 'Fornecedor atualizado.');
     }
 
-    public function destroy($id)
+    public function destroy(Fornecedor $fornecedor)
     {
-        Fornecedor::destroy($id);
-        return response()->json(['message' => 'Fornecedor removido com sucesso']);
+        $fornecedor->delete();
+        return redirect()->route('fornecedores.index')->with('success', 'Fornecedor removido.');
     }
 }

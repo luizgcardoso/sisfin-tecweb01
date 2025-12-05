@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Recebimento;
+use App\Models\Membro;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 
@@ -10,29 +11,95 @@ class RecebimentoController extends Controller
 {
     public function index()
     {
-        return Recebimento::all();
+        return view('crud.index', [
+            'title' => 'Recebimentos',
+            'route' => 'recebimentos',
+            'pk' => 'idRecebimento',
+            'items' => Recebimento::with('membro')->paginate(12),
+            'fields' => ['idRecebimento', 'descricao', 'valor', 'dataRec', 'membro.pessoa.nome'],
+            'columns' => ['ID', 'Descrição', 'Valor', 'Data', 'Membro'],
+        ]);
+    }
+
+    public function create()
+    {
+        return view('crud.form', [
+            'title' => 'Novo Recebimento',
+            'action' => route('recebimentos.store'),
+            'method' => 'POST',
+            'route' => 'recebimentos',
+            'item' => new Recebimento(),
+            'fields' => [
+                ['label' => 'Descrição', 'name' => 'descricao', 'type' => 'text', 'col' => 6, 'required' => true],
+                ['label' => 'Valor', 'name' => 'valor', 'type' => 'number', 'col' => 6, 'step' => '0.01', 'required' => true],
+                ['label' => 'Data', 'name' => 'dataRec', 'type' => 'date', 'col' => 6],
+                [
+                    'label' => 'Membro',
+                    'name' => 'idMembro',
+                    'type' => 'select',
+                    'col' => 6,
+                    'required' => true,
+                    'options' => Membro::with('pessoa')->get()->pluck('pessoa.nome', 'idMembro')
+                ],
+            ]
+        ]);
     }
 
     public function store(Request $request)
     {
-        return Recebimento::create($request->all());
+        $request->validate([
+            'descricao' => 'required|string',
+            'valor' => 'required|numeric',
+            'dataRec' => 'nullable|date',
+            'idMembro' => 'required|exists:membros,idMembro',
+        ]);
+
+        Recebimento::create($request->all());
+
+        return redirect()->route('recebimentos.index')->with('success', 'Recebimento criado.');
     }
 
-    public function show($id)
+    public function edit(Recebimento $recebimento)
     {
-        return Recebimento::findOrFail($id);
+        return view('crud.form', [
+            'title' => 'Editar Recebimento',
+            'action' => route('recebimentos.update', ['recebimento' => $recebimento->idRecebimento]),
+            'method' => 'PUT',
+            'route' => 'recebimentos',
+            'item' => $recebimento,
+            'fields' => [
+                ['label' => 'Descrição', 'name' => 'descricao', 'type' => 'text', 'col' => 6, 'required' => true],
+                ['label' => 'Valor', 'name' => 'valor', 'type' => 'number', 'col' => 6, 'step' => '0.01', 'required' => true],
+                ['label' => 'Data', 'name' => 'dataRec', 'type' => 'date', 'col' => 6],
+                [
+                    'label' => 'Membro',
+                    'name' => 'idMembro',
+                    'type' => 'select',
+                    'col' => 6,
+                    'required' => true,
+                    'options' => Membro::with('pessoa')->get()->pluck('pessoa.nome', 'idMembro')
+                ],
+            ]
+        ]);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Recebimento $recebimento)
     {
-        $rec = Recebimento::findOrFail($id);
-        $rec->update($request->all());
-        return $rec;
+        $request->validate([
+            'descricao' => 'required|string',
+            'valor' => 'required|numeric',
+            'dataRec' => 'nullable|date',
+            'idMembro' => 'required|exists:membros,idMembro',
+        ]);
+
+        $recebimento->update($request->all());
+
+        return redirect()->route('recebimentos.index')->with('success', 'Recebimento atualizado.');
     }
 
-    public function destroy($id)
+    public function destroy(Recebimento $recebimento)
     {
-        Recebimento::destroy($id);
-        return response()->json(['message' => 'Recebimento removido com sucesso']);
+        $recebimento->delete();
+        return redirect()->route('recebimentos.index')->with('success', 'Recebimento removido.');
     }
 }
